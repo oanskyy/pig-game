@@ -14,6 +14,7 @@ GAME RULES:
 let scores, roundScore, activePlayer, gamePlaying;
 
 init(); 
+let previousDice;
 
 
 // Set up EVENT Handlers
@@ -28,7 +29,11 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
       diceDOM.src = 'dice-' + dice + '.png';
 
       // 3. Update the round score IF the rolled number was NOT a 1
-      if (dice !== 1) { 
+      if(dice === 6 && previousDice === 6) { 
+        scores[activePlayer] = 0;
+        document.querySelector('#score-' + activePlayer).textContent = 0;
+        nextPlayer();
+      } else if (dice !== 1) { 
         // Add score
         roundScore += dice; 
         document.querySelector('#current-' + activePlayer).textContent = roundScore;
@@ -36,6 +41,7 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
         // Next player
         nextPlayer();
       }
+      previousDice = dice;
     }  
 });
 
@@ -48,8 +54,16 @@ document.querySelector('.btn-hold').addEventListener('click', function() {
     // Update UI
     document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
 
+    let input = document.querySelector('.final-score').value;
+    let winningScore; 
+    if(input) { 
+      winningScore = input; 
+    } else { 
+      winningScore = 100; 
+    }
+
     // Check if player won the game 
-    if (scores[activePlayer] >= 20) { 
+    if (scores[activePlayer] >= winningScore) { 
       document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
       document.querySelector('.dice').style.display = 'none';
       document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner'); 
@@ -99,3 +113,4 @@ function init() {
   document.querySelector('.player-1-panel').classList.remove('active');
   document.querySelector('.player-0-panel').classList.add('active');
 }
+
